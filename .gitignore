@@ -1,0 +1,23 @@
+# Dependencies
+/node_modules
+
+# Next.js
+/.next/
+/out/
+
+# Prisma
+/prisma/*.db
+/prisma/*.db-journal
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# Editor
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

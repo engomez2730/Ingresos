@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Path \"D:\\\\SPN_INGRESOS\")",
+      "Bash(Select-Object Name, LastWriteTime)",
+      "Bash(mkdir -p \"D:/SPN_INGRESOS/database\" \"D:/SPN_INGRESOS/prisma\" \"D:/SPN_INGRESOS/lib\" \"D:/SPN_INGRESOS/types\" \"D:/SPN_INGRESOS/app/api/clientes/[id]\" \"D:/SPN_INGRESOS/app/api/companias/[id]\" \"D:/SPN_INGRESOS/app/api/conceptos/[id]\" \"D:/SPN_INGRESOS/app/\\\\\\(dashboard\\\\\\)/clientes\" \"D:/SPN_INGRESOS/app/\\\\\\(dashboard\\\\\\)/companias/[id]\" \"D:/SPN_INGRESOS/components/ui\" \"D:/SPN_INGRESOS/components/dashboard\" \"D:/SPN_INGRESOS/components/clientes\" \"D:/SPN_INGRESOS/components/companias\" \"D:/SPN_INGRESOS/components/conceptos\")",
+      "Bash(cat \"C:/Users/Trabajo/AppData/Local/npm-cache/_logs/2026-05-24T16_01_55_917Z-eresolve-report.txt\" 2>/dev/null | head -60)",
+      "Bash(sqlcmd -L)",
+      "Skill(anthropic-skills:skill-creator)",
+      "Skill(anthropic-skills:skill-creator:*)",
+      "PowerShell(sqlcmd -S \"localhost\" -U sa -P \"Elsa273014!\" -C -i \"D:\\\\SPN_INGRESOS\\\\database\\\\schema.sql\" 2>&1)"
+    ]
+  }
+}
