@@ -6,13 +6,12 @@ export const dynamic = "force-dynamic";
 export default async function CompaniasPage() {
   const [companias, clientes] = await Promise.all([
     prisma.compania.findMany({
-      orderBy: { descripcion: "asc" },
       include: {
         cliente: { select: { id: true, nombre: true } },
         _count: { select: { ingresos: true, descuentos: true } },
       },
-    }),
-    prisma.cliente.findMany({ orderBy: { nombre: "asc" } }),
+    }).then(r => r.sort((a, b) => a.descripcion.localeCompare(b.descripcion))),
+    prisma.cliente.findMany().then(r => r.sort((a, b) => a.nombre.localeCompare(b.nombre))),
   ]);
 
   return (

@@ -1,11 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  experimental: {
-    serverActions: {
-      allowedOrigins: ["localhost:3000"],
-    },
-  },
+  serverExternalPackages: ["@prisma/client"],
+  distDir: "C:\\NextBuild\\spn-ingresos",
 };
 
 export default nextConfig;

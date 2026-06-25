@@ -11,8 +11,6 @@ export default async function DashboardPage() {
       prisma.ingreso.count({ where: { estado: true } }),
       prisma.descuento.count({ where: { estado: true } }),
       prisma.compania.findMany({
-        take: 6,
-        orderBy: { fechaCreacion: "desc" },
         include: {
           cliente: { select: { nombre: true } },
           _count: { select: { ingresos: true, descuentos: true } },
@@ -20,10 +18,14 @@ export default async function DashboardPage() {
       }),
     ]);
 
+  const ultimasCompaniasOrdenadas = ultimasCompanias
+    .sort((a, b) => b.fechaCreacion.getTime() - a.fechaCreacion.getTime())
+    .slice(0, 6);
+
   return (
     <DashboardView
       stats={{ totalClientes, totalCompanias, totalIngresos, totalDescuentos }}
-      ultimasCompanias={ultimasCompanias.map((c) => ({
+      ultimasCompanias={ultimasCompaniasOrdenadas.map((c) => ({
         ...c,
         latitud:  c.latitud  ? Number(c.latitud)  : null,
         longitud: c.longitud ? Number(c.longitud) : null,

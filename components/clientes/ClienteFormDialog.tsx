@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -59,7 +59,7 @@ export function ClienteFormDialog({ open, editData, onClose }: Props) {
       }
       onCancel={onClose}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
       width={420}
     >
       <Form form={form} layout="vertical" onFinish={handleSubmit} style={{ marginTop: 16 }}>
@@ -68,8 +68,8 @@ export function ClienteFormDialog({ open, editData, onClose }: Props) {
           label="Nombre del Cliente"
           rules={[
             { required: true, message: "El nombre es requerido" },
-            { min: 2, message: "Mínimo 2 caracteres" },
-            { max: 200, message: "Máximo 200 caracteres" },
+            { min: 2, message: "MÃ­nimo 2 caracteres" },
+            { max: 200, message: "MÃ¡ximo 200 caracteres" },
           ]}
         >
           <Input placeholder="Ej. Grupo Empresarial Andina" size="large" />

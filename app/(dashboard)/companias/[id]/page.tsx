@@ -11,8 +11,8 @@ export default async function CompaniaDetallePage({ params }: { params: Promise<
     where: { id: Number(id) },
     include: {
       cliente:   { select: { id: true, nombre: true } },
-      ingresos:  { orderBy: { descripcion: "asc" } },
-      descuentos:{ orderBy: { descripcion: "asc" } },
+      ingresos:  true,
+      descuentos: true,
     },
   });
 

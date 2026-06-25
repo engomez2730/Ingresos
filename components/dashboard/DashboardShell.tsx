@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import Image from "next/image";
 import {
   Layout, Menu, Avatar,
   Typography, ConfigProvider,
@@ -101,53 +100,18 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
               overflow: "hidden",
             }}
           >
-            {collapsed ? (
-              /* Collapsed: ícono cuadrado con fondo blanco semitransparente */
-              <div
-                style={{
-                  width: 42,
-                  height: 42,
-                  borderRadius: 10,
-                  background: "rgba(255,255,255,0.95)",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexShrink: 0,
-                  overflow: "hidden",
-                }}
-              >
-                <Image
-                  src="/logo.png"
-                  alt="SPN Software"
-                  width={38}
-                  height={38}
-                  style={{ objectFit: "contain" }}
-                  priority
-                />
-              </div>
-            ) : (
-              /* Expanded: logo completo sobre fondo blanco redondeado */
-              <div
-                style={{
-                  background: "rgba(255,255,255,0.95)",
-                  borderRadius: 12,
-                  padding: "8px 12px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "100%",
-                }}
-              >
-                <Image
-                  src="/logo.png"
-                  alt="SPN Software"
-                  width={160}
-                  height={72}
-                  style={{ objectFit: "contain" }}
-                  priority
-                />
-              </div>
-            )}
+            <div
+              style={{
+                color: "#fff",
+                fontWeight: 800,
+                fontSize: collapsed ? 20 : 28,
+                letterSpacing: 2,
+                fontFamily: "inherit",
+                transition: "font-size 0.2s",
+              }}
+            >
+              SPN
+            </div>
           </div>
 
           {/* ── Navigation ── */}

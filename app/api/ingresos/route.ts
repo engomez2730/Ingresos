@@ -12,10 +12,9 @@ const schema = z.object({
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const companiaId = searchParams.get("companiaId");
-  const ingresos = await prisma.ingreso.findMany({
+  const ingresos = (await prisma.ingreso.findMany({
     where: companiaId ? { companiaId: Number(companiaId) } : undefined,
-    orderBy: { descripcion: "asc" },
-  });
+  })).sort((a, b) => a.descripcion.localeCompare(b.descripcion));
   return NextResponse.json(ingresos);
 }
 

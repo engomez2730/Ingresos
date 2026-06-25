@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -62,7 +62,7 @@ function CatalogoCard({ titulo, icono, color, items, endpoint }: CatalogoCardPro
 
   const columns: ColumnsType<TipoItem> = [
     {
-      title: "Descripción",
+      title: "DescripciÃ³n",
       dataIndex: "descripcion",
       key: "descripcion",
       sorter: (a, b) => a.descripcion.localeCompare(b.descripcion),
@@ -85,9 +85,9 @@ function CatalogoCard({ titulo, icono, color, items, endpoint }: CatalogoCardPro
         <Space>
           <Button type="link" size="small" icon={<EditOutlined />} onClick={() => openEdit(record)} />
           <Popconfirm
-            title="¿Eliminar este tipo?"
-            description="Solo puedes eliminar tipos que no estén en uso."
-            okText="Sí" cancelText="No" okButtonProps={{ danger: true }}
+            title="Â¿Eliminar este tipo?"
+            description="Solo puedes eliminar tipos que no estÃ©n en uso."
+            okText="SÃ­" cancelText="No" okButtonProps={{ danger: true }}
             onConfirm={() => handleDelete(record.id)}
           >
             <Button type="link" size="small" danger icon={<DeleteOutlined />}
@@ -128,12 +128,12 @@ function CatalogoCard({ titulo, icono, color, items, endpoint }: CatalogoCardPro
         }
         onCancel={closeModal}
         footer={null}
-        destroyOnClose
+        destroyOnHidden
         width={400}
       >
         <Form form={form} layout="vertical" onFinish={handleSave} style={{ marginTop: 16 }}>
-          <Form.Item name="descripcion" label="Descripción"
-            rules={[{ required: true, message: "Requerido" }, { min: 2, message: "Mínimo 2 caracteres" }]}>
+          <Form.Item name="descripcion" label="DescripciÃ³n"
+            rules={[{ required: true, message: "Requerido" }, { min: 2, message: "MÃ­nimo 2 caracteres" }]}>
             <Input placeholder="Ej. Salarial" size="large" />
           </Form.Item>
           <Form.Item name="estado" label="Estado" valuePropName="checked">
@@ -167,10 +167,10 @@ export function CatalogosView({ tiposIngreso, tiposDescuento, tiposCompania }: P
       <div style={{ marginBottom: 24 }}>
         <Title level={4} style={{ margin: 0 }}>
           <AppstoreOutlined style={{ marginRight: 8, color: "#1677ff" }} />
-          Catálogos
+          CatÃ¡logos
         </Title>
         <Text type="secondary">
-          Administra los tipos dinámicos utilizados en toda la plataforma
+          Administra los tipos dinÃ¡micos utilizados en toda la plataforma
         </Text>
       </div>
 
@@ -195,7 +195,7 @@ export function CatalogosView({ tiposIngreso, tiposDescuento, tiposCompania }: P
         </Col>
         <Col xs={24} lg={8}>
           <CatalogoCard
-            titulo="Tipos de Compañía"
+            titulo="Tipos de CompaÃ±Ã­a"
             icono={<BankOutlined style={{ color: "#722ed1" }} />}
             color="#722ed1"
             items={tiposCompania}

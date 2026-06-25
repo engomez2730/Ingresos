@@ -19,7 +19,8 @@ export async function GET(_req: Request, { params }: Params) {
     where: { id: Number(id) },
     include: {
       cliente: { select: { id: true, nombre: true } },
-      conceptos: { orderBy: [{ tipo: "desc" }, { descripcion: "asc" }] },
+      ingresos: true,
+      descuentos: true,
     },
   });
   if (!compania) return NextResponse.json({ error: "No encontrado" }, { status: 404 });

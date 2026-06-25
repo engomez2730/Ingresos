@@ -5,7 +5,7 @@ import { z } from "zod";
 const schema = z.object({ descripcion: z.string().min(2).max(100), estado: z.boolean().default(true) });
 
 export async function GET() {
-  const items = await prisma.tipoCompania.findMany({ orderBy: { descripcion: "asc" } });
+  const items = (await prisma.tipoCompania.findMany()).sort((a, b) => a.descripcion.localeCompare(b.descripcion));
   return NextResponse.json(items);
 }
 

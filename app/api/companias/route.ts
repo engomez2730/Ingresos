@@ -15,14 +15,13 @@ export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const clienteId = searchParams.get("clienteId");
 
-  const companias = await prisma.compania.findMany({
+  const companias = (await prisma.compania.findMany({
     where: clienteId ? { clienteId: Number(clienteId) } : undefined,
-    orderBy: { descripcion: "asc" },
     include: {
       cliente: { select: { id: true, nombre: true } },
-      _count: { select: { conceptos: true } },
+      _count: { select: { ingresos: true, descuentos: true } },
     },
-  });
+  })).sort((a, b) => a.descripcion.localeCompare(b.descripcion));
   return NextResponse.json(companias);
 }
 

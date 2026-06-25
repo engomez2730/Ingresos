@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -62,11 +62,11 @@ export function CompaniaFormDialog({ open, clientes, editData, onClose }: Props)
     });
 
     if (res.ok) {
-      message.success(isEdit ? "Compañía actualizada" : "Compañía creada correctamente");
+      message.success(isEdit ? "CompaÃ±Ã­a actualizada" : "CompaÃ±Ã­a creada correctamente");
       onClose();
       router.refresh();
     } else {
-      message.error("Error al guardar la compañía");
+      message.error("Error al guardar la compaÃ±Ã­a");
     }
   }
 
@@ -76,12 +76,12 @@ export function CompaniaFormDialog({ open, clientes, editData, onClose }: Props)
       title={
         <span>
           <BankOutlined style={{ marginRight: 8, color: "#722ed1" }} />
-          {isEdit ? "Editar Compañía" : "Nueva Compañía"}
+          {isEdit ? "Editar CompaÃ±Ã­a" : "Nueva CompaÃ±Ã­a"}
         </span>
       }
       onCancel={onClose}
       footer={null}
-      destroyOnClose
+      destroyOnHidden
       width={580}
     >
       <Form form={form} layout="vertical" onFinish={handleSubmit} style={{ marginTop: 16 }}>
@@ -101,19 +101,19 @@ export function CompaniaFormDialog({ open, clientes, editData, onClose }: Props)
 
         <Form.Item
           name="descripcion"
-          label="Razón Social / Descripción"
+          label="RazÃ³n Social / DescripciÃ³n"
           rules={[
-            { required: true, message: "La descripción es requerida" },
-            { min: 2, message: "Mínimo 2 caracteres" },
+            { required: true, message: "La descripciÃ³n es requerida" },
+            { min: 2, message: "MÃ­nimo 2 caracteres" },
           ]}
         >
-          <Input placeholder="Ej. Andina Logística Ltda." size="large" />
+          <Input placeholder="Ej. Andina LogÃ­stica Ltda." size="large" />
         </Form.Item>
 
         <Row gutter={16}>
           <Col span={14}>
             <Form.Item name="sucursalPrincipal" label="Sucursal Principal">
-              <Input placeholder="Ej. Bogotá - Sede Principal" />
+              <Input placeholder="Ej. BogotÃ¡ - Sede Principal" />
             </Form.Item>
           </Col>
           <Col span={10}>
@@ -175,7 +175,7 @@ export function CompaniaFormDialog({ open, clientes, editData, onClose }: Props)
                 cursor: "pointer",
               }}
             >
-              {isEdit ? "Actualizar" : "Guardar Compañía"}
+              {isEdit ? "Actualizar" : "Guardar CompaÃ±Ã­a"}
             </button>
           </div>
         </Form.Item>

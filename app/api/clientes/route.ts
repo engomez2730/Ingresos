@@ -8,10 +8,9 @@ const schema = z.object({
 
 export async function GET() {
   try {
-    const clientes = await prisma.cliente.findMany({
-      orderBy: { nombre: "asc" },
+    const clientes = (await prisma.cliente.findMany({
       include: { _count: { select: { companias: true } } },
-    });
+    })).sort((a, b) => a.nombre.localeCompare(b.nombre));
     return NextResponse.json(clientes);
   } catch {
     return NextResponse.json({ error: "Error al obtener clientes" }, { status: 500 });

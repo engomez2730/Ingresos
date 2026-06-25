@@ -8,7 +8,8 @@
       "Bash(sqlcmd -L)",
       "Skill(anthropic-skills:skill-creator)",
       "Skill(anthropic-skills:skill-creator:*)",
-      "PowerShell(sqlcmd -S \"localhost\" -U sa -P \"Elsa273014!\" -C -i \"D:\\\\SPN_INGRESOS\\\\database\\\\schema.sql\" 2>&1)"
+      "PowerShell(sqlcmd -S \"localhost\" -U sa -P \"Elsa273014!\" -C -i \"D:\\\\SPN_INGRESOS\\\\database\\\\schema.sql\" 2>&1)",
+      "PowerShell(sqlcmd -S \"PTC-ANALISTABI\\\\SQLEXPRESS01\" -U spn -P spn -Q \"IF NOT EXISTS \\(SELECT name FROM sys.databases WHERE name = 'SPN_INGRESOS'\\) BEGIN CREATE DATABASE SPN_INGRESOS; PRINT 'Base de datos creada.' END ELSE PRINT 'La base de datos ya existe.'\")"
     ]
   }
 }

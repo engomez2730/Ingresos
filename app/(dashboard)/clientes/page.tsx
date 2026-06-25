@@ -4,10 +4,9 @@ import { ClientesView } from "@/components/clientes/ClientesView";
 export const dynamic = "force-dynamic";
 
 export default async function ClientesPage() {
-  const clientes = await prisma.cliente.findMany({
-    orderBy: { nombre: "asc" },
+  const clientes = (await prisma.cliente.findMany({
     include: { _count: { select: { companias: true } } },
-  });
+  })).sort((a, b) => a.nombre.localeCompare(b.nombre));
 
   return (
     <ClientesView
