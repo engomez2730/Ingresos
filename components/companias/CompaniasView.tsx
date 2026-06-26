@@ -8,29 +8,25 @@ import { CompaniaFormDialog } from "./CompaniaFormDialog";
 
 const { Title, Text } = Typography;
 
-interface Cliente { id: number; nombre: string }
-
 interface Compania {
-  id: number;
-  descripcion: string;
+  id:                number;
+  descripcion:       string;
   sucursalPrincipal: string | null;
-  tipoEmpresa: string | null;
-  latitud: number | null;
-  longitud: number | null;
-  fechaCreacion: string;
+  tipoEmpresa:       string | null;
+  latitud:           number | null;
+  longitud:          number | null;
+  fechaCreacion:     string;
   fechaActualizacion: string;
-  cliente: { id: number; nombre: string };
-  _count: { conceptos: number };
+  _count:            { conceptos: number };
 }
 
 interface Props {
-  clientes: Cliente[];
   companias: Compania[];
 }
 
-export function CompaniasView({ clientes, companias }: Props) {
+export function CompaniasView({ companias }: Props) {
   const [modalOpen, setModalOpen] = useState(false);
-  const [editData, setEditData] = useState<Compania | null>(null);
+  const [editData,  setEditData]  = useState<Compania | null>(null);
 
   function handleEdit(c: Compania) {
     setEditData(c);
@@ -74,7 +70,6 @@ export function CompaniasView({ clientes, companias }: Props) {
 
       <CompaniaFormDialog
         open={modalOpen}
-        clientes={clientes}
         editData={editData}
         onClose={handleClose}
       />

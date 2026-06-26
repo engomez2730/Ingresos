@@ -7,81 +7,94 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Cliente {
-  id                 Int        @id @default(autoincrement()) @map("ID")
-  nombre             String     @map("Nombre")                @db.NVarChar(200)
-  fechaCreacion      DateTime   @default(now())               @map("FechaCreacion")
-  fechaActualizacion DateTime   @default(now()) @updatedAt    @map("FechaActualizacion")
-  companias          Compania[]
-  @@map("Cliente")
-}
-
 model TipoCompania {
   id          Int        @id @default(autoincrement()) @map("ID")
-  descripcion String     @map("Descripcion")                  @db.NVarChar(100)
-  estado      Boolean    @default(true) @map("Estado")
+  descripcion String     @map("Descripcion")           @db.NVarChar(100)
+  estado      Boolean    @default(true)                @map("Estado")
   companias   Compania[]
   @@map("TipoCompania")
 }
 
 model Compania {
-  id                 Int           @id @default(autoincrement()) @map("ID")
-  clienteId          Int                                         @map("ClienteID")
-  descripcion        String                                      @map("Descripcion")       @db.NVarChar(300)
-  sucursalPrincipal  String?                                     @map("SucursalPrincipal") @db.NVarChar(300)
-  latitud            Decimal?                                    @map("Latitud")           @db.Decimal(10, 8)
-  longitud           Decimal?                                    @map("Longitud")          @db.Decimal(11, 8)
-  tipoEmpresa        String?                                     @map("TipoEmpresa")       @db.NVarChar(100)
-  tipoCompaniaId     Int?                                        @map("TipoCompaniaID")
-  fechaCreacion      DateTime      @default(now())               @map("FechaCreacion")
-  fechaActualizacion DateTime      @default(now()) @updatedAt    @map("FechaActualizacion")
-  cliente            Cliente       @relation(fields: [clienteId], references: [id])
-  tipoCompania       TipoCompania? @relation(fields: [tipoCompaniaId], references: [id])
-  ingresos           Ingreso[]
-  descuentos         Descuento[]
+  id                 Int                  @id @default(autoincrement()) @map("ID")
+  descripcion        String               @map("Descripcion")       @db.NVarChar(300)
+  sucursalPrincipal  String?              @map("SucursalPrincipal") @db.NVarChar(300)
+  latitud            Decimal?             @map("Latitud")           @db.Decimal(10, 8)
+  longitud           Decimal?             @map("Longitud")          @db.Decimal(11, 8)
+  tipoEmpresa        String?              @map("TipoEmpresa")       @db.NVarChar(100)
+  tipoCompaniaId     Int?                 @map("TipoCompaniaID")
+  fechaCreacion      DateTime             @default(now())           @map("FechaCreacion")
+  fechaActualizacion DateTime             @default(now()) @updatedAt @map("FechaActualizacion")
+  tipoCompania       TipoCompania?        @relation(fields: [tipoCompaniaId], references: [id])
+  ingresos           CompaniaIngreso[]
+  descuentos         CompaniaDescuento[]
   @@map("Compania")
 }
 
 model TipoIngreso {
   id          Int       @id @default(autoincrement()) @map("ID")
-  descripcion String    @map("Descripcion")                   @db.NVarChar(200)
-  estado      Boolean   @default(true) @map("Estado")
+  descripcion String    @map("Descripcion")           @db.NVarChar(200)
+  estado      Boolean   @default(true)                @map("Estado")
   ingresos    Ingreso[]
   @@map("TipoIngreso")
 }
 
 model Ingreso {
-  id                 Int          @id @default(autoincrement()) @map("ID")
-  companiaId         Int                                        @map("CompaniaID")
-  tipoIngresoId      Int?                                       @map("TipoIngresoID")
-  descripcion        String                                     @map("Descripcion")   @db.NVarChar(400)
-  estado             Boolean      @default(true)                @map("Estado")
-  observaciones      String?                                    @map("Observaciones") @db.NVarChar(Max)
-  fechaCreacion      DateTime     @default(now())               @map("FechaCreacion")
-  fechaActualizacion DateTime     @default(now()) @updatedAt    @map("FechaActualizacion")
-  compania           Compania     @relation(fields: [companiaId], references: [id])
-  tipoIngreso        TipoIngreso? @relation(fields: [tipoIngresoId], references: [id])
+  id                 Int               @id @default(autoincrement()) @map("ID")
+  tipoIngresoId      Int?              @map("TipoIngresoID")
+  descripcion        String            @map("Descripcion")   @db.NVarChar(400)
+  estado             Boolean           @default(true)        @map("Estado")
+  observaciones      String?           @map("Observaciones") @db.NVarChar(Max)
+  fechaCreacion      DateTime          @default(now())       @map("FechaCreacion")
+  fechaActualizacion DateTime          @default(now()) @updatedAt @map("FechaActualizacion")
+  tipoIngreso        TipoIngreso?      @relation(fields: [tipoIngresoId], references: [id])
+  companias          CompaniaIngreso[]
+  @@unique([descripcion, tipoIngresoId])
   @@map("Ingreso")
 }
 
 model TipoDescuento {
   id          Int         @id @default(autoincrement()) @map("ID")
-  descripcion String      @map("Descripcion")                   @db.NVarChar(200)
-  estado      Boolean     @default(true) @map("Estado")
+  descripcion String      @map("Descripcion")           @db.NVarChar(200)
+  estado      Boolean     @default(true)                @map("Estado")
   descuentos  Descuento[]
   @@map("TipoDescuento")
 }
 
 model Descuento {
-  id                 Int           @id @default(autoincrement()) @map("ID")
-  companiaId         Int                                         @map("CompaniaID")
-  tipoDescuentoId    Int?                                        @map("TipoDescuentoID")
-  descripcion        String                                      @map("Descripcion")   @db.NVarChar(400)
-  estado             Boolean       @default(true)                @map("Estado")
-  observaciones      String?                                     @map("Observaciones") @db.NVarChar(Max)
-  fechaCreacion      DateTime      @default(now())               @map("FechaCreacion")
-  fechaActualizacion DateTime      @default(now()) @updatedAt    @map("FechaActualizacion")
-  compania           Compania      @relation(fields: [companiaId], references: [id])
-  tipoDescuento      TipoDescuento? @relation(fields: [tipoDescuentoId], references: [id])
+  id                 Int                 @id @default(autoincrement()) @map("ID")
+  tipoDescuentoId    Int?                @map("TipoDescuentoID")
+  descripcion        String              @map("Descripcion")   @db.NVarChar(400)
+  estado             Boolean             @default(true)        @map("Estado")
+  observaciones      String?             @map("Observaciones") @db.NVarChar(Max)
+  fechaCreacion      DateTime            @default(now())       @map("FechaCreacion")
+  fechaActualizacion DateTime            @default(now()) @updatedAt @map("FechaActualizacion")
+  tipoDescuento      TipoDescuento?      @relation(fields: [tipoDescuentoId], references: [id])
+  companias          CompaniaDescuento[]
+  @@unique([descripcion, tipoDescuentoId])
   @@map("Descuento")
+}
+
+model CompaniaIngreso {
+  id              Int      @id @default(autoincrement()) @map("ID")
+  companiaId      Int      @map("CompaniaID")
+  ingresoId       Int      @map("IngresoID")
+  fechaAsignacion DateTime @default(now()) @map("FechaAsignacion")
+  activo          Boolean  @default(true)  @map("Activo")
+  compania        Compania @relation(fields: [companiaId], references: [id])
+  ingreso         Ingreso  @relation(fields: [ingresoId], references: [id])
+  @@unique([companiaId, ingresoId])
+  @@map("Compania_Ingreso")
+}
+
+model CompaniaDescuento {
+  id              Int       @id @default(autoincrement()) @map("ID")
+  companiaId      Int       @map("CompaniaID")
+  descuentoId     Int       @map("DescuentoID")
+  fechaAsignacion DateTime  @default(now()) @map("FechaAsignacion")
+  activo          Boolean   @default(true)  @map("Activo")
+  compania        Compania  @relation(fields: [companiaId], references: [id])
+  descuento       Descuento @relation(fields: [descuentoId], references: [id])
+  @@unique([companiaId, descuentoId])
+  @@map("Compania_Descuento")
 }

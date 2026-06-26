@@ -15,13 +15,12 @@ import type { ColumnsType } from "antd/es/table";
 const { Text } = Typography;
 
 interface Compania {
-  id: number;
-  descripcion: string;
+  id:                number;
+  descripcion:       string;
   sucursalPrincipal: string | null;
-  tipoEmpresa: string | null;
-  fechaCreacion: string;
-  cliente: { id: number; nombre: string };
-  _count: { conceptos: number };
+  tipoEmpresa:       string | null;
+  fechaCreacion:     string;
+  _count:            { conceptos: number };
 }
 
 interface Props {
@@ -82,12 +81,6 @@ export function CompaniasList({ companias, onEdit }: Props) {
           </div>
         </Space>
       ),
-    },
-    {
-      title: "Cliente",
-      key: "cliente",
-      sorter: (a, b) => a.cliente.nombre.localeCompare(b.cliente.nombre),
-      render: (_: unknown, r: Compania) => <Text type="secondary">{r.cliente.nombre}</Text>,
     },
     {
       title: "Tipo",

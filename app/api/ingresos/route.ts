@@ -3,21 +3,26 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
 const schema = z.object({
-  companiaId:   z.number().int().positive(),
-  descripcion:  z.string().min(2).max(400),
-  estado:       z.boolean().default(true),
-  observaciones:z.string().max(4000).optional().nullable(),
+  descripcion:   z.string().min(2).max(400),
+  tipoIngresoId: z.number().int().positive().optional().nullable(),
+  estado:        z.boolean().default(true),
+  observaciones: z.string().max(4000).optional().nullable(),
 });
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const companiaId = searchParams.get("companiaId");
-  const ingresos = (await prisma.ingreso.findMany({
-    where: companiaId ? { companiaId: Number(companiaId) } : undefined,
-  })).sort((a, b) => a.descripcion.localeCompare(b.descripcion));
+/** GET — catálogo global de ingresos */
+export async function GET() {
+  const ingresos = (
+    await prisma.ingreso.findMany({
+      include: {
+        tipoIngreso: true,
+        _count: { select: { companias: true } },
+      },
+    })
+  ).sort((a, b) => a.descripcion.localeCompare(b.descripcion));
   return NextResponse.json(ingresos);
 }
 
+/** POST — crear entrada en el catálogo (sin asignar a compañía) */
 export async function POST(req: Request) {
   try {
     const data = schema.parse(await req.json());
@@ -26,6 +31,6 @@ export async function POST(req: Request) {
   } catch (e) {
     if (e instanceof z.ZodError)
       return NextResponse.json({ error: e.errors }, { status: 422 });
-    return NextResponse.json({ error: "Error al crear ingreso" }, { status: 500 });
+    return NextResponse.json({ error: "Error al crear ingreso en catálogo" }, { status: 500 });
   }
 }

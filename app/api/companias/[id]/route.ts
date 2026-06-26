@@ -3,12 +3,12 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
 const schema = z.object({
-  clienteId: z.number().int().positive(),
-  descripcion: z.string().min(2).max(300),
+  descripcion:       z.string().min(2).max(300),
   sucursalPrincipal: z.string().max(300).optional().nullable(),
-  latitud: z.number().min(-90).max(90).optional().nullable(),
-  longitud: z.number().min(-180).max(180).optional().nullable(),
-  tipoEmpresa: z.string().max(100).optional().nullable(),
+  latitud:           z.number().min(-90).max(90).optional().nullable(),
+  longitud:          z.number().min(-180).max(180).optional().nullable(),
+  tipoEmpresa:       z.string().max(100).optional().nullable(),
+  tipoCompaniaId:    z.number().int().positive().optional().nullable(),
 });
 
 type Params = { params: Promise<{ id: string }> };
@@ -18,9 +18,14 @@ export async function GET(_req: Request, { params }: Params) {
   const compania = await prisma.compania.findUnique({
     where: { id: Number(id) },
     include: {
-      cliente: { select: { id: true, nombre: true } },
-      ingresos: true,
-      descuentos: true,
+      ingresos: {
+        include: { ingreso: { include: { tipoIngreso: true } } },
+        orderBy: { fechaAsignacion: "asc" },
+      },
+      descuentos: {
+        include: { descuento: { include: { tipoDescuento: true } } },
+        orderBy: { fechaAsignacion: "asc" },
+      },
     },
   });
   if (!compania) return NextResponse.json({ error: "No encontrado" }, { status: 404 });
@@ -30,12 +35,8 @@ export async function GET(_req: Request, { params }: Params) {
 export async function PUT(req: Request, { params }: Params) {
   const { id } = await params;
   try {
-    const body = await req.json();
-    const data = schema.parse(body);
-    const compania = await prisma.compania.update({
-      where: { id: Number(id) },
-      data,
-    });
+    const data = schema.parse(await req.json());
+    const compania = await prisma.compania.update({ where: { id: Number(id) }, data });
     return NextResponse.json(compania);
   } catch (e) {
     if (e instanceof z.ZodError)

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
-  Users,
   Building2,
   FileText,
   ChevronRight,
@@ -13,7 +12,6 @@ import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/",          label: "Dashboard",  icon: LayoutDashboard },
-  { href: "/clientes",  label: "Clientes",   icon: Users },
   { href: "/companias", label: "Compañías",  icon: Building2 },
   { href: "/conceptos", label: "Conceptos",  icon: FileText },
 ];

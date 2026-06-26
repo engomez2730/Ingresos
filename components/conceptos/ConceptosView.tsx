@@ -1,56 +1,49 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { Table, Tag, Card, Typography, Space, Tabs, Button } from "antd";
-import { RiseOutlined, FallOutlined, EyeOutlined } from "@ant-design/icons";
+import { Table, Tag, Card, Typography, Space, Tabs } from "antd";
+import { RiseOutlined, FallOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
-import { ConceptoFormDialog } from "./ConceptoFormDialog";
 
 const { Title, Text } = Typography;
 
-interface Tipo    { id: number; descripcion: string }
-interface Compania { id: number; descripcion: string; cliente: { nombre: string } }
+interface Tipo { id: number; descripcion: string }
 
-interface Ingreso {
-  id: number; descripcion: string; estado: boolean; observaciones: string | null;
-  tipoIngreso:  Tipo | null;
-  compania: Compania;
+interface IngresoRow {
+  id:            number;
+  descripcion:   string;
+  estado:        boolean;
+  observaciones: string | null;
+  tipoIngreso:   Tipo | null;
+  _count:        { companias: number };
 }
 
-interface Descuento {
-  id: number; descripcion: string; estado: boolean; observaciones: string | null;
-  tipoDescuento: Tipo | null;
-  compania: Compania;
+interface DescuentoRow {
+  id:             number;
+  descripcion:    string;
+  estado:         boolean;
+  observaciones:  string | null;
+  tipoDescuento:  Tipo | null;
+  _count:         { companias: number };
 }
 
 interface Props {
-  ingresos:   Ingreso[];
-  descuentos: Descuento[];
-  companias:  Compania[];
+  ingresos:   IngresoRow[];
+  descuentos: DescuentoRow[];
 }
 
-function makeColumns<T extends { estado: boolean; compania: Compania; observaciones: string | null }>(
-  router: ReturnType<typeof useRouter>,
-  tipoKey: "tipoIngreso" | "tipoDescuento",
-  tagColor: "success" | "warning",
-): ColumnsType<T> {
-  return [
+const baseColumns = (tipoKey: "tipoIngreso" | "tipoDescuento", tagColor: "success" | "warning") =>
+  [
     {
-      title: "Descripción",
+      title:     "Descripción",
       dataIndex: "descripcion",
-      key: "descripcion",
-      sorter: (a: Record<string, unknown>, b: Record<string, unknown>) =>
-        String(a.descripcion).localeCompare(String(b.descripcion)),
+      key:       "descripcion",
+      sorter:    (a: { descripcion: string }, b: { descripcion: string }) =>
+        a.descripcion.localeCompare(b.descripcion),
       render: (t: string) => <Text strong>{t}</Text>,
     },
     {
       title: "Tipo",
-      key: "tipo",
-      sorter: (a: Record<string, unknown>, b: Record<string, unknown>) => {
-        const ta = (a[tipoKey] as Tipo | null)?.descripcion ?? "";
-        const tb = (b[tipoKey] as Tipo | null)?.descripcion ?? "";
-        return ta.localeCompare(tb);
-      },
+      key:   "tipo",
       render: (_: unknown, r: Record<string, unknown>) => {
         const t = r[tipoKey] as Tipo | null;
         return t
@@ -59,59 +52,41 @@ function makeColumns<T extends { estado: boolean; compania: Compania; observacio
       },
     },
     {
-      title: "Observaciones",
+      title:     "Observaciones",
       dataIndex: "observaciones",
-      key: "observaciones",
-      render: (o: string | null) =>
+      key:       "observaciones",
+      render:    (o: string | null) =>
         o ? <Text type="secondary">{o}</Text> : <Text type="secondary">—</Text>,
     },
     {
-      title: "Estado",
+      title:     "Estado",
       dataIndex: "estado",
-      key: "estado",
-      align: "center",
+      key:       "estado",
+      align:     "center" as const,
+      width:     100,
+      filters:   [{ text: "Activo", value: true }, { text: "Inactivo", value: false }],
+      onFilter:  (v: unknown, r: Record<string, unknown>) => r.estado === v,
+      render:    (e: boolean) => <Tag color={e ? "green" : "default"}>{e ? "Activo" : "Inactivo"}</Tag>,
+    },
+    {
+      title: "Compañías",
+      key:   "companias",
+      align: "center" as const,
       width: 100,
-      filters: [{ text: "Activo", value: true }, { text: "Inactivo", value: false }],
-      onFilter: (v: unknown, r: Record<string, unknown>) => r.estado === v,
-      render: (e: boolean) => <Tag color={e ? "green" : "default"}>{e ? "Activo" : "Inactivo"}</Tag>,
-    },
-    {
-      title: "Compañía",
-      key: "compania",
-      sorter: (a: Record<string, unknown>, b: Record<string, unknown>) =>
-        (a.compania as Compania).descripcion.localeCompare((b.compania as Compania).descripcion),
-      render: (_: unknown, r: Record<string, unknown>) => <Text>{(r.compania as Compania).descripcion}</Text>,
-    },
-    {
-      title: "Cliente",
-      key: "cliente",
-      render: (_: unknown, r: Record<string, unknown>) =>
-        <Text type="secondary">{(r.compania as Compania).cliente.nombre}</Text>,
-    },
-    {
-      title: "",
-      key: "ver",
-      align: "center",
-      width: 70,
-      render: (_: unknown, r: Record<string, unknown>) => (
-        <Button type="link" size="small" icon={<EyeOutlined />}
-          onClick={() => router.push(`/companias/${(r.compania as Compania).id}`)}>
-          Ver
-        </Button>
+      sorter: (a: { _count: { companias: number } }, b: { _count: { companias: number } }) =>
+        a._count.companias - b._count.companias,
+      render: (_: unknown, r: { _count: { companias: number } }) => (
+        <Tag color="geekblue" style={{ fontWeight: 600 }}>
+          {r._count.companias}
+        </Tag>
       ),
     },
-  ];
-}
+  ] as ColumnsType<IngresoRow | DescuentoRow>;
 
-export function ConceptosView({ ingresos, descuentos, companias }: Props) {
-  const router = useRouter();
-
-  const colIng = makeColumns(router, "tipoIngreso",  "success");
-  const colDes = makeColumns(router, "tipoDescuento", "warning");
-
+export function ConceptosView({ ingresos, descuentos }: Props) {
   const tabItems = [
     {
-      key: "ingresos",
+      key:   "ingresos",
       label: (
         <Space>
           <RiseOutlined style={{ color: "#52c41a" }} />
@@ -120,15 +95,17 @@ export function ConceptosView({ ingresos, descuentos, companias }: Props) {
       ),
       children: (
         <Table
-          dataSource={ingresos} columns={colIng as ColumnsType<Ingreso>}
-          rowKey="id" size="middle"
+          dataSource={ingresos}
+          columns={baseColumns("tipoIngreso", "success") as ColumnsType<IngresoRow>}
+          rowKey="id"
+          size="middle"
           pagination={{ pageSize: 12, showTotal: (t) => `${t} ingresos` }}
-          locale={{ emptyText: "Sin ingresos registrados" }}
+          locale={{ emptyText: "Catálogo de ingresos vacío" }}
         />
       ),
     },
     {
-      key: "descuentos",
+      key:   "descuentos",
       label: (
         <Space>
           <FallOutlined style={{ color: "#fa8c16" }} />
@@ -137,10 +114,12 @@ export function ConceptosView({ ingresos, descuentos, companias }: Props) {
       ),
       children: (
         <Table
-          dataSource={descuentos} columns={colDes as ColumnsType<Descuento>}
-          rowKey="id" size="middle"
+          dataSource={descuentos}
+          columns={baseColumns("tipoDescuento", "warning") as ColumnsType<DescuentoRow>}
+          rowKey="id"
+          size="middle"
           pagination={{ pageSize: 12, showTotal: (t) => `${t} descuentos` }}
-          locale={{ emptyText: "Sin descuentos registrados" }}
+          locale={{ emptyText: "Catálogo de descuentos vacío" }}
         />
       ),
     },
@@ -148,20 +127,12 @@ export function ConceptosView({ ingresos, descuentos, companias }: Props) {
 
   return (
     <div>
-      {/* Cabecera con botones globales */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 24 }}>
-        <div>
-          <Title level={4} style={{ margin: 0 }}>Conceptos de Nómina</Title>
-          <Space style={{ marginTop: 4 }}>
-            <Tag icon={<RiseOutlined />} color="success">{ingresos.length} ingresos</Tag>
-            <Tag icon={<FallOutlined />} color="warning">{descuentos.length} descuentos</Tag>
-            <Text type="secondary">· {ingresos.length + descuentos.length} total</Text>
-          </Space>
-        </div>
-        {/* Botones globales: muestran selector de compañía */}
-        <Space>
-          <ConceptoFormDialog variant="ingreso"   companias={companias} />
-          <ConceptoFormDialog variant="descuento" companias={companias} />
+      <div style={{ marginBottom: 24 }}>
+        <Title level={4} style={{ margin: 0 }}>Catálogo de Conceptos</Title>
+        <Space style={{ marginTop: 4 }}>
+          <Tag icon={<RiseOutlined />} color="success">{ingresos.length} ingresos</Tag>
+          <Tag icon={<FallOutlined />} color="warning">{descuentos.length} descuentos</Tag>
+          <Text type="secondary">· Los conceptos se asignan desde el detalle de cada compañía</Text>
         </Space>
       </div>
 

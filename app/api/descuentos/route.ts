@@ -3,21 +3,26 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
 const schema = z.object({
-  companiaId:   z.number().int().positive(),
-  descripcion:  z.string().min(2).max(400),
-  estado:       z.boolean().default(true),
-  observaciones:z.string().max(4000).optional().nullable(),
+  descripcion:     z.string().min(2).max(400),
+  tipoDescuentoId: z.number().int().positive().optional().nullable(),
+  estado:          z.boolean().default(true),
+  observaciones:   z.string().max(4000).optional().nullable(),
 });
 
-export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const companiaId = searchParams.get("companiaId");
-  const descuentos = (await prisma.descuento.findMany({
-    where: companiaId ? { companiaId: Number(companiaId) } : undefined,
-  })).sort((a, b) => a.descripcion.localeCompare(b.descripcion));
+/** GET — catálogo global de descuentos */
+export async function GET() {
+  const descuentos = (
+    await prisma.descuento.findMany({
+      include: {
+        tipoDescuento: true,
+        _count: { select: { companias: true } },
+      },
+    })
+  ).sort((a, b) => a.descripcion.localeCompare(b.descripcion));
   return NextResponse.json(descuentos);
 }
 
+/** POST — crear entrada en el catálogo (sin asignar a compañía) */
 export async function POST(req: Request) {
   try {
     const data = schema.parse(await req.json());
@@ -26,6 +31,6 @@ export async function POST(req: Request) {
   } catch (e) {
     if (e instanceof z.ZodError)
       return NextResponse.json({ error: e.errors }, { status: 422 });
-    return NextResponse.json({ error: "Error al crear descuento" }, { status: 500 });
+    return NextResponse.json({ error: "Error al crear descuento en catálogo" }, { status: 500 });
   }
 }

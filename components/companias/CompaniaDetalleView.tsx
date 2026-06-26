@@ -8,39 +8,46 @@ import { ConceptoFormDialog } from "@/components/conceptos/ConceptoFormDialog";
 
 const { Title, Text } = Typography;
 
-interface Item { id: number; descripcion: string; estado: boolean; observaciones: string | null }
+export interface ConceptoDetalle {
+  pivotId:       number;
+  ingresoId?:    number;
+  descuentoId?:  number;
+  descripcion:   string;
+  tipo:          string | null;
+  observaciones: string | null;
+  estado:        boolean;
+  activo:        boolean;
+}
 
 interface Props {
   compania: {
-    id: number;
-    descripcion: string;
+    id:                number;
+    descripcion:       string;
     sucursalPrincipal: string | null;
-    tipoEmpresa: string | null;
-    fechaCreacion: string;
-    cliente: { id: number; nombre: string };
-    ingresos:   Item[];
-    descuentos: Item[];
+    tipoEmpresa:       string | null;
+    fechaCreacion:     string;
+    ingresos:          ConceptoDetalle[];
+    descuentos:        ConceptoDetalle[];
   };
 }
 
 export function CompaniaDetalleView({ compania }: Props) {
   const router = useRouter();
   const activos =
-    compania.ingresos.filter((i) => i.estado).length +
-    compania.descuentos.filter((d) => d.estado).length;
+    compania.ingresos.filter((i) => i.activo).length +
+    compania.descuentos.filter((d) => d.activo).length;
 
   return (
     <div>
       <Breadcrumb
         style={{ marginBottom: 16 }}
         items={[
-          { title: <HomeOutlined />, onClick: () => router.push("/"), style: { cursor: "pointer" } },
-          { title: "Compañías", onClick: () => router.push("/companias"), style: { cursor: "pointer" } },
+          { title: <HomeOutlined />, onClick: () => router.push("/"),          style: { cursor: "pointer" } },
+          { title: "Compañías",     onClick: () => router.push("/companias"),  style: { cursor: "pointer" } },
           { title: compania.descripcion },
         ]}
       />
 
-      {/* Header */}
       <Card style={{ borderRadius: 12, marginBottom: 20, border: "1px solid #f0f0f0" }} styles={{ body: { padding: "20px 24px" } }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16 }}>
           <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
@@ -55,7 +62,6 @@ export function CompaniaDetalleView({ compania }: Props) {
             <div>
               <Title level={4} style={{ margin: 0 }}>{compania.descripcion}</Title>
               <Space size={12} wrap>
-                <Text type="secondary">Cliente: <Text strong>{compania.cliente.nombre}</Text></Text>
                 {compania.tipoEmpresa && <Tag color="purple">{compania.tipoEmpresa}</Tag>}
                 {compania.sucursalPrincipal && (
                   <Text type="secondary" style={{ fontSize: 12 }}>
@@ -65,7 +71,6 @@ export function CompaniaDetalleView({ compania }: Props) {
               </Space>
             </div>
           </div>
-          {/* Botones separados por tipo */}
           <Space>
             <ConceptoFormDialog companiaId={compania.id} variant="ingreso"   />
             <ConceptoFormDialog companiaId={compania.id} variant="descuento" />
@@ -96,7 +101,6 @@ export function CompaniaDetalleView({ compania }: Props) {
         </Row>
       </Card>
 
-      {/* Tablas lado a lado */}
       <Row gutter={16}>
         <Col xs={24} xl={12}>
           <Card
@@ -104,7 +108,19 @@ export function CompaniaDetalleView({ compania }: Props) {
             style={{ borderRadius: 12, border: "1px solid #b7eb8f" }}
             styles={{ header: { background: "#f6ffed", borderBottom: "1px solid #b7eb8f" } }}
           >
-            <ConceptosList items={compania.ingresos} variant="ingreso" />
+            <ConceptosList
+              items={compania.ingresos.map((i) => ({
+                id:            i.ingresoId!,
+                pivotId:       i.pivotId,
+                descripcion:   i.descripcion,
+                tipo:          i.tipo,
+                estado:        i.estado,
+                activo:        i.activo,
+                observaciones: i.observaciones,
+              }))}
+              variant="ingreso"
+              companiaId={compania.id}
+            />
           </Card>
         </Col>
         <Col xs={24} xl={12}>
@@ -113,7 +129,19 @@ export function CompaniaDetalleView({ compania }: Props) {
             style={{ borderRadius: 12, border: "1px solid #ffd591" }}
             styles={{ header: { background: "#fff7e6", borderBottom: "1px solid #ffd591" } }}
           >
-            <ConceptosList items={compania.descuentos} variant="descuento" />
+            <ConceptosList
+              items={compania.descuentos.map((d) => ({
+                id:            d.descuentoId!,
+                pivotId:       d.pivotId,
+                descripcion:   d.descripcion,
+                tipo:          d.tipo,
+                estado:        d.estado,
+                activo:        d.activo,
+                observaciones: d.observaciones,
+              }))}
+              variant="descuento"
+              companiaId={compania.id}
+            />
           </Card>
         </Col>
       </Row>
